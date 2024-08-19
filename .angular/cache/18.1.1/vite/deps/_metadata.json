@@ -1,0 +1,73 @@
+{
+  "hash": "e3953025",
+  "configHash": "33039087",
+  "lockfileHash": "7fe43fad",
+  "browserHash": "dc5a42af",
+  "optimized": {
+    "@angular/common": {
+      "src": "../../../../../node_modules/@angular/common/fesm2022/common.mjs",
+      "file": "@angular_common.js",
+      "fileHash": "f2b4d627",
+      "needsInterop": false
+    },
+    "@angular/core": {
+      "src": "../../../../../node_modules/@angular/core/fesm2022/core.mjs",
+      "file": "@angular_core.js",
+      "fileHash": "d5739422",
+      "needsInterop": false
+    },
+    "@angular/forms": {
+      "src": "../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
+      "file": "@angular_forms.js",
+      "fileHash": "8dc6bcc9",
+      "needsInterop": false
+    },
+    "@angular/platform-browser": {
+      "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
+      "file": "@angular_platform-browser.js",
+      "fileHash": "f044d6c2",
+      "needsInterop": false
+    },
+    "@angular/platform-browser/animations/async": {
+      "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/animations/async.mjs",
+      "file": "@angular_platform-browser_animations_async.js",
+      "fileHash": "d112e695",
+      "needsInterop": false
+    },
+    "@angular/router": {
+      "src": "../../../../../node_modules/@angular/router/fesm2022/router.mjs",
+      "file": "@angular_router.js",
+      "fileHash": "5c3c2777",
+      "needsInterop": false
+    },
+    "@swimlane/ngx-datatable": {
+      "src": "../../../../../node_modules/@swimlane/ngx-datatable/fesm2020/swimlane-ngx-datatable.mjs",
+      "file": "@swimlane_ngx-datatable.js",
+      "fileHash": "88c54ac6",
+      "needsInterop": false
+    },
+    "rxjs": {
+      "src": "../../../../../node_modules/rxjs/dist/esm5/index.js",
+      "file": "rxjs.js",
+      "fileHash": "3e8de70a",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "browser-F2AZVZRA": {
+      "file": "browser-F2AZVZRA.js"
+    },
+    "chunk-CATWBQM5": {
+      "file": "chunk-CATWBQM5.js"
+    },
+    "chunk-WPGYK6NN": {
+      "file": "chunk-WPGYK6NN.js"
+    },
+    "chunk-TLYJK3HS": {
+      "file": "chunk-TLYJK3HS.js"
+    },
+    "chunk-3BOTTHIN": {
+      "file": "chunk-3BOTTHIN.js"
+    }
+  }
+}
