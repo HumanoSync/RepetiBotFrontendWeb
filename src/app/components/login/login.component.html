@@ -1,0 +1,27 @@
+<app-header></app-header>
+
+<div class="login">
+
+<img src = "../../../assets/imgs/fastporte-logo.png" >
+
+
+<h1>Welcome, Let's Get Started!</h1>
+<form mat class="card" [formGroup]="signInForm">
+    <mat-form-field>
+        <input matInput placeholder="Email address" formControlName="email">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="password" placeholder="Password" formControlName="password">
+    </mat-form-field>
+    <button mat-raised-button color="primary" [routerLink]="'/servo'" >Login</button>
+    <div class="column">
+        <p><a [routerLink]="'/forgot-password'"  style="color: white;"><u>Forgot Your Password?</u></a></p>
+        <p>No Account Yet? <a [routerLink]="'/signup'"  style="color: white;"><u>Create Account</u></a></p>
+    </div>
+  
+</form>
+</div>
+
+ <app-footer></app-footer>
+
+

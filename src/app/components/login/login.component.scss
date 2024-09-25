@@ -1,0 +1,74 @@
+h1 {
+    text-align: center;
+    margin-top: 3vh;
+    color : black;
+}
+
+img{
+    display: block;
+    padding: 15px 15px;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+    margin-top: 12vh;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5vh;
+    margin-bottom: 15vh;
+    width: 20vw;
+    padding-top: 7vh;
+    padding-bottom: 5vh;
+    padding-left: 7%;
+    padding-right: 7%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+a{
+    color: rgba(1, 4, 136, 0.9);;
+}
+
+p{
+    font-size: 12px;
+    text-align: center;
+    margin-top: 1vh;
+    color:white;
+}
+
+button{
+    margin-top: 1vh;
+    border-radius: 5vh;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 3vh;
+    background-color: rgba(28, 30, 148, 0.9); /* Establece el fondo del div como blanco */
+    padding: 10px; /* Puedes ajustar el padding si es necesario */
+    border-radius: 5px; /* Añade bordes redondeados si lo deseas */
+}
+
+
+.card {
+    border-radius: 20px;
+    background: rgba(1, 4, 136, 0.9);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, .08), 0 0 6px rgba(0, 0, 0, .05);
+    /*transition: .3s transform cubic-bezier(.155, 1.105, .295, 1.12), .3s box-shadow, .3s -webkit-transform cubic-bezier(.155, 1.105, .295, 1.12);*/
+}
+
+@media (max-width: 900px) {
+    form {
+        width: 50vw;
+    }
+}
+
+.login {
+    background-color: white; /* Fondo blanco para el contenedor del formulario */
+    padding: 20px;
+    border-radius: 10px;
+}

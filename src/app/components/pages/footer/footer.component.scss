@@ -1,0 +1,46 @@
+footer {
+    background-color: rgba(1, 4, 136, 0.9);; /* Color azul claro */
+    color: white;
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box; /* Incluye el padding en el ancho total */
+    width: 100%;
+  }
+  
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 20px;
+  }
+  
+  .footer-section {
+    display: flex;
+    align-items: center;
+  }
+  
+  .about h1 {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .social-icons {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+  }
+  
+  .icon {
+    height: 30px;
+    width: 30px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  
+  .copyright p {
+    margin: 0;
+  }
+  

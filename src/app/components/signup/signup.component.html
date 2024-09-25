@@ -1,0 +1,98 @@
+<app-header></app-header>
+
+<div class="signup1">
+    <h1>Create A New Account</h1>
+    <form class="card" [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Email -->
+      <mat-form-field>
+        <input matInput placeholder="Email address" formControlName="email" type="email">
+        <mat-error *ngIf="email?.errors?.['required']">Email is <strong>required</strong></mat-error>
+        <mat-error *ngIf="email?.errors?.['email'] && !email?.errors?.['required']">Invalid email format</mat-error>
+      </mat-form-field>
+  
+      <!-- First Name -->
+      <mat-form-field>
+        <input matInput placeholder="First Name" formControlName="first_name">
+        <mat-error *ngIf="first_name?.errors?.['required']">First name is <strong>required</strong></mat-error>
+      </mat-form-field>
+  
+      <!-- Last Name -->
+      <mat-form-field>
+        <input matInput placeholder="Last Name" formControlName="last_name">
+        <mat-error *ngIf="last_name?.errors?.['required']">Last name is <strong>required</strong></mat-error>
+      </mat-form-field>
+  
+      <!-- Password -->
+      <mat-form-field>
+        <input matInput placeholder="Password" formControlName="password" type="password">
+        <mat-error *ngIf="password?.errors?.['required']">Password is <strong>required</strong></mat-error>
+        <mat-error *ngIf="password?.errors?.['minlength'] && !password?.errors?.['required']">
+          Password must have at least <strong>7</strong> characters
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Region -->
+      <mat-form-field>
+        <mat-label>Region</mat-label>
+        <mat-select formControlName="region">
+          <mat-option value="Amazonas">Amazonas</mat-option>
+          <mat-option value="Ancash">Ancash</mat-option>
+          <!-- Añade más opciones según sea necesario -->
+        </mat-select>
+        <mat-error *ngIf="region?.errors?.['required']">Region is <strong>required</strong></mat-error>
+      </mat-form-field>
+  
+      <!-- Date of Birth -->
+      <mat-form-field>
+        <mat-label>Date of birth</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="birthDate">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="birthDate?.errors?.['required']">Birth date is <strong>required</strong></mat-error>
+      </mat-form-field>
+  
+      <!-- Phone -->
+      <mat-form-field>
+        <input matInput placeholder="Phone number" formControlName="phone">
+        <mat-error *ngIf="phone?.errors?.['required']">Phone is <strong>required</strong></mat-error>
+        <mat-error *ngIf="phone?.errors?.['pattern'] && !phone?.errors?.['required']">
+          Phone must have only <strong>numbers</strong>
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- ID Card -->
+      <mat-form-field>
+        <input matInput placeholder="ID Robot" formControlName="idCard">
+        <mat-error *ngIf="idCard?.errors?.['required']">ID is <strong>required</strong></mat-error>
+        <mat-error *ngIf="idCard?.errors?.['pattern'] && !idCard?.errors?.['required']">
+          ID must have only <strong>numbers</strong>
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Type of User -->
+      <mat-form-field>
+        <mat-label>Type of user</mat-label>
+        <mat-select formControlName="typeofuser">
+          <mat-option value="client">Client</mat-option>
+          <mat-option value="driver">Company</mat-option>
+        </mat-select>
+        <mat-error *ngIf="typeofuser?.errors?.['required']">Type of user is <strong>required</strong></mat-error>
+      </mat-form-field>
+  
+      <!-- Description -->
+      <mat-form-field>
+        <textarea matInput placeholder="Type a description about you" formControlName="description"></textarea>
+      </mat-form-field>
+  
+      <!-- Submit Button -->
+      <button mat-raised-button color="primary" [disabled]="!signupForm.valid">Create Account</button>
+    </form>
+  </div>
+  
+
+
+
+<app-footer></app-footer>
+
