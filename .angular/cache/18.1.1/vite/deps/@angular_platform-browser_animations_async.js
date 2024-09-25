@@ -1,6 +1,6 @@
 import {
   DomRendererFactory2
-} from "./chunk-CATWBQM5.js";
+} from "./chunk-Y3N4BARR.js";
 import {
   DOCUMENT
 } from "./chunk-WPGYK6NN.js";
@@ -46,7 +46,7 @@ var _AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
    * @internal
    */
   loadImpl() {
-    const moduleImpl = this.moduleImpl ?? import("./browser-F2AZVZRA.js").then((m) => m);
+    const moduleImpl = this.moduleImpl ?? import("./browser-B6GKC7RY.js").then((m) => m);
     return moduleImpl.catch((e) => {
       throw new RuntimeError(5300, (typeof ngDevMode === "undefined" || ngDevMode) && "Async loading for animations package was enabled, but loading failed. Angular falls back to using regular rendering. No animations will be displayed and their styles won't be applied.");
     }).then(({
