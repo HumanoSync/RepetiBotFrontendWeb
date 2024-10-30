@@ -1,27 +1,36 @@
-<app-header></app-header>
+<div class="login-container">
+    <div class="form-container">
+      <h1>Login</h1>
+      <form class="card" [formGroup]="loginForm">
+        <mat-form-field>
+          <input matInput placeholder="Email address" formControlName="username"  required/>
+          <mat-error *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+            Please enter a valid email . 
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="{{hidePassword ? 'password' : 'text'}}" placeholder="Password" formControlName="password" required/>
+          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" >
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon> 
+          </button>
+          <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            Please enter a valid password .
+            </mat-error>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="button" (click)="onSubmit()">Login</button>
 
-<div class="login">
-
-<img src = "../../../assets/imgs/fastporte-logo.png" >
-
-
-<h1>Welcome, Let's Get Started!</h1>
-<form mat class="card" [formGroup]="signInForm">
-    <mat-form-field>
-        <input matInput placeholder="Email address" formControlName="email">
-    </mat-form-field>
-    <mat-form-field>
-        <input matInput type="password" placeholder="Password" formControlName="password">
-    </mat-form-field>
-    <button mat-raised-button color="primary" [routerLink]="'/servo'" >Login</button>
-    <div class="column">
-        <p><a [routerLink]="'/forgot-password'"  style="color: white;"><u>Forgot Your Password?</u></a></p>
-        <p>No Account Yet? <a [routerLink]="'/signup'"  style="color: white;"><u>Create Account</u></a></p>
+        <div class="column">
+          <p><a [routerLink]="'/forgot-password'" style="color: white;"><u>Forgot Your Password?</u></a></p>
+          <p>No Account Yet? <a [routerLink]="'/signup'" style="color: white;"><u>Create Account</u></a></p>
+        </div>
+      </form>
     </div>
   
-</form>
-</div>
+    <div class="image-container">
+      <img src="assets/images/logo_presen.png" alt="Logo" />
+    </div>
+  </div>
+  
 
- <app-footer></app-footer>
 
 

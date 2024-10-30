@@ -6,10 +6,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { HeaderComponent } from '../pages/header/header.component';
-import { FooterComponent } from '../pages/footer/footer.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { NgIf } from '@angular/common';  // Para usar directiva *ngIf
+import { AuthServiceService } from '../../services/storage/auth-service.service';
+import { Subscription } from 'rxjs';
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-signup',
@@ -22,83 +26,63 @@ import { NgIf } from '@angular/common';  // Para usar directiva *ngIf
     MatButtonModule,
     MatSelectModule,
     MatDatepickerModule,
+    MatIconModule,
     MatNativeDateModule,
-    HeaderComponent,
-    FooterComponent,
-    NgIf
+    NgIf,
+    CommonModule
   ],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent implements OnInit {
-  signupForm!: FormGroup;
+  signupForm! : FormGroup;
+  hidePassword = true;
+  constructor(
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar,
+    private authService: AuthServiceService,
+    private router: Router){
 
-  constructor(private fb: FormBuilder) {}
+  }
 
-  ngOnInit(): void {
-    this.signupForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      first_name: ['', Validators.required],
-      last_name: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(7)]],
-      region: ['', Validators.required],
-      birthDate: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{9,12}$/)]],
-      idCard: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
-      typeofuser: ['', Validators.required],
-      description: ['']
+  ngOnInit():void{
+    this.signupForm= this.fb.group({
+      username:[null, [Validators.required, Validators.email]],
+      password: [null,[Validators.required]],
+      phone: [null, [Validators.required]]
+
+
+    })
+  }
+
+  togglePasswordVisibility(){
+    this.hidePassword= !this.hidePassword;
+  }
+
+  onSubmit():void {
+    const password = this.signupForm.get('password')?.value;
+
+
+    const subscription: Subscription = this.authService.register(this.signupForm.value)
+    .subscribe({
+      next: (response) => {
+        this.snackBar.open('Sign up successful!', 'Close', { duration: 5000 });
+        this.router.navigateByUrl("/login");
+      },
+      error: (error) => {
+        this.snackBar.open('Sign up failed. Please try again.', 'close', {
+          duration: 5000, panelClass: 'error-snackbar'
+        });
+      }
     });
+
+
+
+
   }
 
-  // Método para manejar el envío del formulario
-  onSubmit(): void {
-    if (this.signupForm.valid) {
-      console.log('Form Submitted', this.signupForm.value);
-      alert('Form successfully submitted!');
-    } else {
-      alert('Please fill all the required fields correctly.');
-    }
-  }
 
   // Método para acceder a los campos del formulario
-  get email() {
-    return this.signupForm.get('email');
-  }
-
-  get first_name() {
-    return this.signupForm.get('first_name');
-  }
-
-  get last_name() {
-    return this.signupForm.get('last_name');
-  }
-
-  get password() {
-    return this.signupForm.get('password');
-  }
-
-  get region() {
-    return this.signupForm.get('region');
-  }
-
-  get birthDate() {
-    return this.signupForm.get('birthDate');
-  }
-
-  get phone() {
-    return this.signupForm.get('phone');
-  }
-
-  get idCard() {
-    return this.signupForm.get('idCard');
-  }
-
-  get typeofuser() {
-    return this.signupForm.get('typeofuser');
-  }
-
-  get description() {
-    return this.signupForm.get('description');
-  }
+  
 }
 

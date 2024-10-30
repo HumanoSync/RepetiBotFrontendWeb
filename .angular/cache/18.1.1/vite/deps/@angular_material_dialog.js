@@ -4,7 +4,7 @@ import {
   OverlayContainer,
   OverlayModule,
   OverlayRef
-} from "./chunk-BGTPBHRL.js";
+} from "./chunk-VU4G5LGT.js";
 import {
   BasePortalOutlet,
   CdkPortalOutlet,
@@ -14,7 +14,8 @@ import {
 } from "./chunk-4COKX445.js";
 import {
   CdkScrollable
-} from "./chunk-HJOJXMLJ.js";
+} from "./chunk-D4OLZXD4.js";
+import "./chunk-FKTTYYE4.js";
 import {
   animate,
   animateChild,
@@ -25,7 +26,6 @@ import {
   transition,
   trigger
 } from "./chunk-MDT27MHF.js";
-import "./chunk-FKTTYYE4.js";
 import {
   A11yModule,
   Directionality,
@@ -38,7 +38,7 @@ import {
   _getFocusedElementPierceShadowDom,
   coerceNumberProperty,
   hasModifierKey
-} from "./chunk-LOOYGAA2.js";
+} from "./chunk-V5JJTUV4.js";
 import {
   DOCUMENT,
   Location

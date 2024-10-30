@@ -4,7 +4,7 @@ h1 {
     color: black;
 }
 
-img{
+img {
     display: block;
     padding: 15px 15px;
     margin-left: auto;
@@ -19,27 +19,26 @@ form {
     margin-top: 5vh;
     margin-bottom: 15vh;
     width: 30vw;
-    padding-top: 7vh;
-    padding-bottom: 5vh;
-    padding-left: 7%;
-    padding-right: 7%;
+    padding: 7vh 7% 5vh 7%; /* Shortened padding shorthand */
     margin-left: auto;
     margin-right: auto;
 }
 
-mat-form-field{
-    margin-top: 3vh;
+mat-form-field {
+    margin-top: 2vh;
+    background-color: white;
+    padding: 9px;
 }
 
-button{
+button {
     margin-top: 3vh;
-    border-radius: 5vh;
+    border-radius: 5px; /* Use pixels for better consistency */
     margin-right: auto;
     margin-left: auto;
     width: 70%;
 }
 
-.column{
+.column {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -48,26 +47,28 @@ button{
 
 .card {
     border-radius: 20px;
-    background: rgba(1, 4, 136, 0.9);
-    box-shadow: 0 6px 10px rgba(246, 242, 242, 0.08), 0 0 6px rgba(0, 0, 0, .05);
-    /*transition: .3s transform cubic-bezier(.155, 1.105, .295, 1.12), .3s box-shadow, .3s -webkit-transform cubic-bezier(.155, 1.105, .295, 1.12);*/
+    background: #2667b5; /* Background color */
+    box-shadow: 0 6px 10px rgba(246, 242, 242, 0.08), 
+                0 0 6px rgba(0, 0, 0, .05);
+    transition: .3s box-shadow; /* Uncomment if transition effect is needed */
 }
 
-.img-user{
+.img-user {
     width: 120px;
     height: 120px;
-    position:static;
+    position: static;
     margin-top: 2vh;
+}
+
+.signup1 {
+    background-color: rgb(230, 239, 248); /* Light background for the form container */
+    padding: 40px;
+    border-radius: 10px;
+    height: 100%;
 }
 
 @media (max-width: 900px) {
     form {
-        width: 50vw;
+        width: 50vw; /* Adjust form width for smaller screens */
     }
-}
-
-.signup1 {
-    background-color: white; /* Fondo blanco para el contenedor del formulario */
-    padding: 20px;
-    border-radius: 10px;
 }

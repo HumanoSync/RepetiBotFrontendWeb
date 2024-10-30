@@ -31,9 +31,8 @@ jobs:
         run: |
              sudo apt-get update
               sudo apt-get install -y libnss3 libxss1 libasound2 libatk-bridge2.0-0 libgtk-3-0
-
-
-        
+      - name: Install packages
+         run:composer install --no-interaction
           
       - name: Zip Artifacts
         run: zip release.zip ./* -r

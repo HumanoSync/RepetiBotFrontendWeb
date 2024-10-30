@@ -1,18 +1,62 @@
+/* Fondo en degradado */
+body {
+    background: linear-gradient(to right, white, #2667b5); /* Degradado de blanco a azul */
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Contenedor principal centrado */
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    width: 100%;
+    background: rgb(230, 239, 248);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(95, 60, 223, 0.87);
+}
+
+/* Formulario a la izquierda */
+.form-container {
+    flex: 10;
+    padding: 50px;
+    background-color: rgb(230, 239, 248);
+    height: 10%;
+    width: 20px;
+    
+
 h1 {
     text-align: center;
     margin-top: 3vh;
-    color : black;
+    color: black;
 }
 
-img{
+/* Imagen a la derecha */
+.image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    background-color: #2667b5;
+    padding: 500px;
+}
+
+.image-container img {
     display: block;
-    padding: 15px 15px;
-    margin-left: auto;
-    margin-right: auto;
-    width: auto;
-    margin-top: 12vh;
+    padding: 80px;
+    max-width: 90%;
+    background-color: #2667b5;
+  
+}
 }
 
+/* Estilos de formulario */
 form {
     display: flex;
     flex-direction: column;
@@ -25,20 +69,21 @@ form {
     padding-right: 7%;
     margin-left: auto;
     margin-right: auto;
+   
 }
 
-a{
-    color: rgba(1, 4, 136, 0.9);;
+a {
+    color: #2667b5;
 }
 
-p{
+p {
     font-size: 12px;
     text-align: center;
     margin-top: 1vh;
-    color:white;
+    color: white;
 }
 
-button{
+button {
     margin-top: 1vh;
     border-radius: 5vh;
 }
@@ -48,17 +93,19 @@ button{
     flex-direction: column;
     align-items: center;
     margin-top: 3vh;
-    background-color: rgba(28, 30, 148, 0.9); /* Establece el fondo del div como blanco */
-    padding: 10px; /* Puedes ajustar el padding si es necesario */
-    border-radius: 5px; /* Añade bordes redondeados si lo deseas */
+    background-color: #2667b5;
+    padding: 10px;
+    border-radius: 5px;
 }
 
-
+/* Tarjeta del formulario */
 .card {
     border-radius: 20px;
-    background: rgba(1, 4, 136, 0.9);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, .08), 0 0 6px rgba(0, 0, 0, .05);
-    /*transition: .3s transform cubic-bezier(.155, 1.105, .295, 1.12), .3s box-shadow, .3s -webkit-transform cubic-bezier(.155, 1.105, .295, 1.12);*/
+    background: #2667b5;
+
+    width: 500px;
+    height: 500px;
+    align-content: end;
 }
 
 @media (max-width: 900px) {
@@ -68,7 +115,7 @@ button{
 }
 
 .login {
-    background-color: white; /* Fondo blanco para el contenedor del formulario */
-    padding: 20px;
+    background-color: rgba(231, 247, 232, 0.94);
+    padding: 5px;
     border-radius: 10px;
 }

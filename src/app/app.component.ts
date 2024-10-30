@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet, RouterModule } from '@angular/router';
+import { RouterLink, RouterOutlet, RouterModule, Router } from '@angular/router';
 import { ConnectionManagerComponent } from './components/connection-manager/connection-manager.component';
 import { ServoControlComponent } from './components/servo-control/servo-control.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,6 +19,9 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatSelectModule } from '@angular/material/select';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
+import { UserStorageService } from './services/storage/user-storage.service';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -45,11 +48,16 @@ import { MatListModule } from '@angular/material/list';
     MatSelectModule,
     MatGridListModule,
     MatListModule,
-    RouterLink
+    RouterLink,
+    CommonModule,
+    MatSnackBarModule, 
+
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'SteelRoyalController';
+
+  
 }

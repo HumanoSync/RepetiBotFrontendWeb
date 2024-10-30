@@ -1,4 +1,7 @@
 import {
+  SharedResizeObserver
+} from "./chunk-UCNIXKFY.js";
+import {
   CdkPortal,
   CdkPortalOutlet,
   TemplatePortal
@@ -6,10 +9,8 @@ import {
 import {
   CdkScrollable,
   ViewportRuler
-} from "./chunk-HJOJXMLJ.js";
-import {
-  SharedResizeObserver
-} from "./chunk-UCNIXKFY.js";
+} from "./chunk-D4OLZXD4.js";
+import "./chunk-FKTTYYE4.js";
 import {
   animate,
   state,
@@ -17,7 +18,6 @@ import {
   transition,
   trigger
 } from "./chunk-MDT27MHF.js";
-import "./chunk-FKTTYYE4.js";
 import {
   CdkMonitorFocus,
   CdkObserveContent,
@@ -32,7 +32,7 @@ import {
   SPACE,
   hasModifierKey,
   normalizePassiveListenerOptions
-} from "./chunk-LOOYGAA2.js";
+} from "./chunk-V5JJTUV4.js";
 import {
   DOCUMENT
 } from "./chunk-WPGYK6NN.js";
