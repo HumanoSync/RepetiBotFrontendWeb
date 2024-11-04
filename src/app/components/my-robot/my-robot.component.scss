@@ -7,3 +7,88 @@ body {
     justify-content: center;
     height: 100vh;
 }
+
+.container {
+    display: flex;
+    align-items: stretch; /* Asegura que ambos elementos se estiren a la misma altura */
+    width: 100%; /* Ajusta el ancho del contenedor */
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    margin: 2%;
+}
+  
+/* Imagen del robot */
+.image-container img {
+    width: auto;
+    max-width: 100%;
+    transform: scale(1.2);
+    margin-top: auto;
+    padding: 20%;
+}
+
+.controls-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Alinea los botones al centro verticalmente */
+    width: 50%; /* Ajusta el ancho de los controles */
+    margin-left: 2%; /* Espacio entre imagen y controles */
+}
+
+.direction-buttons {
+    display: flex; /* Cambia a flex para alinearlos horizontalmente */
+    justify-content: center; /* Alinea los botones al centro horizontalmente */
+    margin-bottom: 20px; /* Espacio entre botones y formulario */
+}
+
+.direction-button {
+    background-color: #007bff; /* Color de fondo azul */
+    color: white; /* Color del texto */
+    border: none;
+    border-radius: 5px; /* Esquinas redondeadas */
+    padding: 10px 15px; /* Espaciado interno */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    margin: 5px; /* Espaciado entre botones */
+    transition: background-color 0.3s, transform 0.2s; /* Efecto de transición */
+}
+
+.direction-button:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el mouse */
+    transform: translateY(-2px); /* Efecto de elevación */
+}
+
+/* Estilos del formulario */
+.robot-form {
+    display: flex;
+    flex-direction: column;
+    width: 80%; /* Ajusta el ancho del formulario */
+}
+
+.robot-form label {
+    margin-bottom: 5px; /* Espacio entre etiqueta y campo */
+    font-weight: bold; /* Etiquetas más destacadas */
+}
+
+.robot-form input {
+    padding: 10px; /* Espaciado interno para campos de entrada */
+    margin-bottom: 15px; /* Espacio entre campos */
+    border: 1px solid #ccc; /* Borde gris claro */
+    border-radius: 5px; /* Esquinas redondeadas */
+}
+
+.robot-form button {
+    background-color: #28a745; /* Color de fondo verde */
+    color: white; /* Color del texto */
+    border: none;
+    border-radius: 5px; /* Esquinas redondeadas */
+    padding: 10px; /* Espaciado interno */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+}
+
+.robot-form button:hover {
+    background-color: #218838; /* Color de fondo al pasar el mouse */
+}

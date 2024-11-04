@@ -19,13 +19,17 @@
   align-items: center;
   width: 30%;
   margin: 2%;
+  background-color: #ffffff; /* Fondo blanco para destacar */
+  border-radius: 8px; /* Esquinas redondeadas */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra para separación */
+  padding: 15px;
 }
 
 /* Grupo de servos */
 .servo-group {
   margin-bottom: 2%;
   text-align: center;
-  width: 60%;
+  width: 100%;
 }
 
 /* Control de servos */
@@ -34,18 +38,31 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 4%;
+  background: #ffffff; /* Fondo blanco para controles */
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  padding: 10px; /* Espaciado interno */
+  transition: transform 0.2s;
+}
+
+.servo-control:hover {
+  transform: translateY(-3px); /* Efecto de elevación en hover */
 }
 
 /* Texto de control del servo */
+/* Texto de control del servo */
 .servo-control span {
   margin-bottom: 2%;
-
+  font-weight: bold; /* Texto más destacado */
+  color: #333; /* Color de texto más oscuro */
 }
 
-.servo-control input[type="range"] {
+/* Estilos para inputs */
+.servo-control input[type="range"],
+.servo-control input[type="number"] {
+  width: 100%; /* Se ajustan al ancho del contenedor */
   margin-bottom: 6%;
 }
-
 /* Contenedor de la imagen */
 .image-container {
   display: flex;
@@ -72,8 +89,10 @@
   flex-direction: column;
   width: 40%;
   padding: 2%;
+  background-color: #ffffff; /* Fondo blanco para el panel derecho */
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
 /* Consola de comandos */
 .command-console {
   width: 100%;
@@ -88,11 +107,24 @@
   margin-bottom: 2%;
 }
 
+/* Botones en grupos */
 .button-group button {
   margin-right: 1%;
   margin-bottom: 1%;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff; /* Color de fondo del botón */
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
+.button-group button:hover {
+  background-color: #0056b3; /* Color más oscuro en hover */
+  transform: translateY(-2px);
+}
 /* Tabla de posiciones */
 .table-container {
   width: 100%;

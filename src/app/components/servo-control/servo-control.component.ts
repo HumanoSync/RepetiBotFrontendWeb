@@ -13,6 +13,8 @@ import { UpdateMovementRequest } from '../../models/UpdateMovementRequest';
 import { UpdatePositionRequest } from '../../models/UpdatePositionRequest';
 import { MovementResource } from '../../models/MovementResource';
 import { PositionResource } from '../../models/PositionResource';
+import { HeaderComponent } from '../pages/header/header.component';
+import { FooterComponent } from '../pages/footer/footer.component';
 
 @Component({
   selector: 'app-servo-control',
@@ -20,6 +22,8 @@ import { PositionResource } from '../../models/PositionResource';
   imports: [
     CommonModule, 
     FormsModule,
+    HeaderComponent,
+    FooterComponent,
     NgxDatatableModule
   ],
   templateUrl: './servo-control.component.html',

@@ -1,12 +1,27 @@
-<div class="container">
+
 <app-header></app-header>
 
+<div class="container">
+    <div class="image-container">
+        <img src="assets/images/robotSinFondo.png" alt="Robot">
+    </div>
+    <div class="controls-container">
+        <div class="direction-buttons">
+            <button class="direction-button">Arriba</button>
+            <button class="direction-button">Abajo</button>
+            <button class="direction-button">Izquierda</button>
+            <button class="direction-button">Derecha</button>
+        </div>
+        <form class="robot-form">
+            <label for="botname">Nombre del Robot:</label>
+            <input type="text" id="botname" name="botname" placeholder="Ingresa el nombre del robot" required />
 
+            <label for="initial_position">Posición Inicial (0-9):</label>
+            <input type="number" id="initial_position" name="initial_position" min="0" max="9" required />
+
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
 </div>
-
-
-
-
-
 
 <app-footer></app-footer>
