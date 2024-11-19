@@ -49,6 +49,9 @@
       <button mat-raised-button color="primary" (click)="toggleSavePositionModal()">
         {{ showSavePositionModal ? 'Cerrar Modal' : 'Guardar a Posición ' }}
       </button>
+      <button mat-raised-button color="primary" (click)="toggleUpdateCurrentPositionModal()">
+        {{ showInitialPositionModal ? 'Cerrar Modal' : 'Mover a Posición ' }}
+      </button>
 
       <button mat-raised-button color="primary" (click)="toggleExecutePositionModal()">
         {{ showExecutePositionModal ? 'Cerrar Modal' : 'Ejecutar  Posición ' }}
@@ -62,6 +65,16 @@
       <div *ngIf="showRobotModal" class="modal-overlay">
         <div class="modal-content">
           <h3>Detalles del Robot</h3>
+          <label for="robotToken">Token del robot:</label>
+          <input
+            type="string"
+            id="token"
+            [(ngModel)]="robotToken"
+            name="robotToken"
+            required
+          />
+
+
           <div *ngIf="robotDetail; else noData">
             <p><strong>ID:</strong> {{ robotDetail.id }}</p>
             <p><strong>Nombre:</strong> {{ robotDetail.botname }}</p>
@@ -75,6 +88,7 @@
           <ng-template #noData>
             <p>No se encontraron detalles del robot.</p>
           </ng-template>
+          <button mat-raised-button color="primary" (click)="getRobotDetails()">Mostrar</button>
           <button (click)="toggleRobotModal()">Cerrar</button>
         </div>
       </div>
@@ -96,6 +110,7 @@
               <thead>
                 <tr>
                   <th>ID</th>
+                  <th>Token</th>
                   <th>Nombre</th>
                   <th>Posición Inicial</th>
                   <th>Posición Actual</th>
@@ -105,6 +120,7 @@
               <tbody>
                 <tr *ngFor="let robot of robots">
                   <td>{{ robot.id }}</td>
+                  <td>{{ robot.token }}</td>
                   <td>{{ robot.botname }}</td>
                   <td>{{ robot.initial_position }}</td>
                   <td>{{ robot.current_position }}</td>
@@ -135,7 +151,7 @@
 <div *ngIf="showInitialPositionModal" class="modal-overlay">
   <div class="modal-container">
     <h3>Confirmar Acción</h3>
-    <p>¿Estás seguro de que deseas mover el robot con el token: {{ robotToken }} a su posición inicial?</p>
+    <p>¿Estás seguro de que deseas mover el robot con el token: {{ robotToken }} a su posición ?</p>
     <div class="modal-actions">
       <button mat-raised-button color="primary" (click)="moveRobotToInitialPosition()">Mover</button>
       <button mat-raised-button color="warn" (click)="toggleInitialPositionModal()">Cancelar</button>
@@ -143,12 +159,19 @@
   </div>
 </div>
 
+
+
+
+
+
+
+
 <div *ngIf="showCurrentPositionModal" class="modal-overlay">
   <div class="modal-container">
     <h3>Confirmar Acción</h3>
     <p>¿Estás seguro de que deseas mover el robot con el token: {{ robotToken }} a la posición ?</p>
     <div class="modal-actions">
-      <button mat-raised-button color="primary" (click)="moveRobotToCurrentPosition()">Mover</button>
+      <button mat-raised-button color="primary" (click)="moveRobotToUpdateCurrentPosition()">Mover</button>
       <button mat-raised-button color="warn" (click)="toggleCurrentPositionModal()">Cancelar</button>
     </div>
   </div>

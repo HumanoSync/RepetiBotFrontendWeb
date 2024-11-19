@@ -39,6 +39,7 @@ export class ServoControlComponent implements OnInit {
   showDeletePositionModal: boolean = false; 
   showUpdateIncreasePositionModal: boolean = false;
   showUpdateDecreasePositionModal: boolean = false;
+  showUpdateCurrentPositionModal: boolean = false;
   showInitialPositionModal: boolean = false; // Controla la visibilidad del modal
   robotToken: string = ''; // Token del robot (dinámico)
   showRobotModal: boolean = false;
@@ -457,6 +458,49 @@ moveRobotToInitialPosition(): void {
   });
 }
 
+toggleUpdateCurrentPositionModal(): void {
+  this.showInitialPositionModal = !this.showInitialPositionModal;
+}
+
+moveRobotToUpdateCurrentPosition(): void {
+  if (!this.robotToken) {
+    alert('Token del robot no encontrado.');
+    return;
+  }
+
+  this.adminService.moveToUpdateCurrentPosition(this.robotToken).subscribe({
+    next: (response) => {
+      console.log("Robot movido a posición :", response);
+      alert("El robot se movió a su posición exitosamente.");
+      this.toggleUpdateCurrentPositionModal(); // Cierra el modal
+    },
+    error: (error) => {
+      console.error("Error al mover el robot a la posición inicial:", error);
+      alert("Ocurrió un error al mover el robot.");
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 toggleCurrentPositionModal(): void {
   this.showCurrentPositionModal = !this.showCurrentPositionModal;
@@ -482,6 +526,7 @@ moveRobotToCurrentPosition(): void {
 }
 
 toggleSavePositionModal(): void {
+  
   this.showSavePositionModal = !this.showSavePositionModal;
 }
 
@@ -520,6 +565,8 @@ moveRobotToExecutePosition(movementId: number): void {
     alert('ID de movimiento no especificado.');
     return;
   }
+
+  console.log('Enviando solicitud con:', { movementId, robotToken: this.robotToken });
 
   this.adminService.moveToExecutePosition(movementId, this.robotToken).subscribe({
     next: (response) => {

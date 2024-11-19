@@ -71,6 +71,38 @@ moveToInitialPosition(robotToken: string): Observable<any> {
     );
 }
 
+
+moveToUpdateCurrentPosition(robotToken: string): Observable<any> {
+  const headers = this.createAuthorizationHeader();
+
+  return this.http.put(`${BASIC_URL}api/v1/robot/update-current-position/${robotToken}`, {}, { headers })
+    .pipe(
+      tap((response) => {
+        console.log("El robot se movió a la posición  exitosamente:", response);
+      }),
+      catchError((error) => {
+        console.error("Error al mover el robot a la posición :", error);
+        return throwError(error);
+      })
+    );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 moveToCurrentPosition(robotToken: string): Observable<any> {
   const headers = this.createAuthorizationHeader();
 
@@ -106,9 +138,9 @@ moveToSavePosition(robotToken: string): Observable<any> {
 
 moveToExecutePosition(movementId: number, robotToken: string): Observable<any> {
   const headers = this.createAuthorizationHeader();
+  const url = `${BASIC_URL}api/v1/robot/execute-movement/${movementId}/${robotToken}`;
 
-  // Asegurar que la URL esté correctamente formada
-  const url = `${BASIC_URL}/api/v1/robot/execute-movement/${movementId}/${robotToken}`;
+  console.log('Llamando al endpoint:', url);
 
   return this.http.post(url, {}, { headers }).pipe(
     tap((response) => {
