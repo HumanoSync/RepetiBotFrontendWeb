@@ -1,4 +1,5 @@
 export interface CreateServoRequest{
-    angle: number;
+    botname: string, 
+    initial_position: number[]
 }
   

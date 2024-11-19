@@ -1,16 +1,15 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthServiceService } from '../../services/storage/auth-service.service';
 import { UserStorageService } from '../../services/storage/user-storage.service';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-
 
 @Component({
   selector: 'app-login',
@@ -22,35 +21,36 @@ import { CommonModule } from '@angular/common';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule,
-    ReactiveFormsModule
-   
+    MatIconModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
-  hidePassword= true;
+  hidePassword = true;
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthServiceService,
     private userStorageService: UserStorageService,
     private snackBar: MatSnackBar,
     private router: Router
-  ){}
- 
-  ngOnInit():void{
-    this.loginForm= this.formBuilder.group({
-      username: [null,[Validators.required]],
-      password: [null,[Validators.required]],
+  ) {}
 
-    })
+  ngOnInit(): void {
+    this.loginForm = this.formBuilder.group({
+      email: [null, [Validators.required, Validators.email]],  // Corrección en la estructura de validadores
+      password: [null, [Validators.required]]
+    });
   }
-  togglePasswordVisibility(){
+
+  // Alternar visibilidad de la contraseña
+  togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
-    
   }
+
+  // Método de envío del formulario
   onSubmit(): void {
     console.log('Form submitted', this.loginForm.value);
     console.log('Form valid:', this.loginForm.valid);
@@ -60,27 +60,25 @@ export class LoginComponent {
       return;
     }
 
-    const username = this.loginForm.get('username')!.value;
-    const password = this.loginForm.get('password')!.value;
+    const { email, password } = this.loginForm.value;
 
-    this.authService.login(username, password).subscribe({
+    this.authService.login(email, password).subscribe({
       next: (res: any) => {
-        console.log('Login response:', res); // Asegúrate de que la respuesta sea la esperada
-      
-        // Acceder a user desde la respuesta
-        const userResponse = res.user; // Cambia esto de userResponse a user
-      
+        console.log('Login response:', res);
+
+        const userResponse = res.user;  // Reemplaza userResponse con user si es necesario en tu API
+
         if (userResponse) {
           this.userStorageService.saveToken(res.access_token);
           this.userStorageService.saveUser(userResponse);
-      
-          // Verifica el rol del usuario y navega a la ruta correspondiente
+
+          // Navegación basada en el rol del usuario
           switch (userResponse.role) {
-            case 'ADMIN':
+            case 'admin':
               console.log('Navigating to servo');
               this.router.navigateByUrl('/servo');
               break;
-            case 'USER':
+            case 'user':
               console.log('Navigating to my-robot');
               this.snackBar.open('Login successful!', 'Close', { duration: 5000 });
               this.router.navigateByUrl('/my-robot');
@@ -93,15 +91,11 @@ export class LoginComponent {
           this.snackBar.open('User response is not valid', 'ERROR', { duration: 5000 });
         }
       },
-      
       error: (error: any) => {
         console.error('Login error', error);
-        const errorMessage = error.status === 401 ? 'Invalid username or password' : 'An unexpected error occurred';
+        const errorMessage = error.status === 401 ? 'Invalid email or password' : 'An unexpected error occurred';
         this.snackBar.open(errorMessage, 'ERROR', { duration: 5000 });
       }
     });
-}
-
-  
-
+  }
 }

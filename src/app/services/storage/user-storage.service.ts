@@ -9,57 +9,51 @@ export class UserStorageService {
 
   constructor() {}
 
-  public saveToken(token: string): void {
+  // Guardar el token en localStorage
+  saveToken(token: string): void {
+    console.log("Guardando token:", token);  // Confirmar el valor recibido
+    if (!token) {
+      console.error("Token inválido:", token);
+      return;
+    }
     window.localStorage.setItem(TOKEN, token);
+    console.log("Token guardado en localStorage:", window.localStorage.getItem(TOKEN));  // Confirmar que se guardó
   }
 
-  public saveUser(user: any): void {
-    window.localStorage.setItem(USER, JSON.stringify(user));
-  }
-
-  static getToken(): string {
-    const token = localStorage.getItem(TOKEN);
-    if (token === null) {
-      throw new Error("Token not found in localStorage");
+  // Obtener el token desde localStorage
+  getToken(): string | null {
+    const token = window.localStorage.getItem(TOKEN);
+    console.log("Token de localStorage:", token);  // Verificar el token al obtenerlo
+    if (!token) {
+      console.error("Token no encontrado en localStorage");
     }
     return token;
   }
 
-  static getUser(): any {
+  // Guardar usuario en localStorage
+  saveUser(user: any): void {
+    console.log("Guardando usuario:", user);
+    window.localStorage.setItem(USER, JSON.stringify(user));
+  }
+
+
+
+  
+
+  // Obtener usuario desde localStorage
+  getUser(): any {
     try {
-      const user = localStorage.getItem(USER);
-      return user ? JSON.parse(user) : {};
+      const user = window.localStorage.getItem(USER);
+      return user ? JSON.parse(user) : null;
     } catch (error) {
-      console.error("Error parsing user data:", error);
-      return {};
+      console.error("Error al obtener el usuario:", error);
+      return null;
     }
   }
 
-  static getUserId(): number {
-    const user = this.getUser();
-    return user?.id ?? 0;
-  }
-
-  static getUserRole(): string {
-    const user = this.getUser();
-    return user?.role ?? '';
-  }
-
-  static isAdminLoggedIn(): boolean {
-    const token = this.getToken();
-    const role = this.getUserRole();
-    return !!token && role === 'ADMIN';
-  }
-
-  static isCustomerLoggedIn(): boolean {
-    const token = this.getToken();
-    const role = this.getUserRole();
-    return !!token && role === 'USER';
-  }
-
-  static signOut(): void {
+  // Limpiar datos de sesión
+  signOut(): void {
     window.localStorage.removeItem(TOKEN);
     window.localStorage.removeItem(USER);
   }
 }
-

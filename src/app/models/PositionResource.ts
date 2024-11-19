@@ -1,8 +1,7 @@
 import { ServoResource } from "./ServoResource";
 
 export interface PositionResource{
-    id: number, 
-    time:number,
+    delay: number, 
     angles: ServoResource[],
     movement_id: number
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet, RouterModule, Router } from '@angular/router';
-import { ConnectionManagerComponent } from './components/connection-manager/connection-manager.component';
+
 import { ServoControlComponent } from './components/servo-control/servo-control.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
@@ -30,7 +30,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     RouterOutlet,
     RouterModule,
     ServoControlComponent, 
-    ConnectionManagerComponent,
+
     MatFormFieldModule,
     MatTableModule,
     MatPaginatorModule,

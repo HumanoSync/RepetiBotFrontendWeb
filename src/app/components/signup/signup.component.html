@@ -1,15 +1,33 @@
 <div class="signup1">
   <h1>Register</h1>
   <form class="card" [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+
+        <!-- username -->
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" placeholder="username" required>
+          <mat-error *ngIf="signupForm.get('username')?.invalid && signupForm.get('username')?.touched">
+              Please enter a valid username.
+          </mat-error>
+        </mat-form-field>
     
     <!-- Email -->
     <mat-form-field appearance="outline">
       <mat-label>Email</mat-label>
-      <input matInput formControlName="username" placeholder="email" required>
-      <mat-error *ngIf="signupForm.get('username')?.invalid && signupForm.get('username')?.touched">
+      <input matInput formControlName="email" placeholder="email" required>
+      <mat-error *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
           Please enter a valid email.
       </mat-error>
     </mat-form-field>
+
+       <!-- username -->
+            <mat-form-field appearance="outline">
+              <mat-label>Full Name</mat-label>
+              <input matInput formControlName="full_name" placeholder="full_name" required>
+              <mat-error *ngIf="signupForm.get('full_name')?.invalid && signupForm.get('full_name')?.touched">
+                  Please enter a valid full name.
+              </mat-error>
+            </mat-form-field>
 
     <!-- Password -->
     <mat-form-field appearance="outline">
@@ -27,14 +45,7 @@
 
 
 
-<!-- Phone Number -->
-<mat-form-field appearance="outline">
-  <mat-label>Phone Number</mat-label>
-  <input matInput formControlName="phone" placeholder="Phone Number" required>
-  <mat-error *ngIf="signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched">
-      Please enter a valid phone number (9 digits).
-  </mat-error>
-</mat-form-field>
+
 
 
     <!-- Submit Button -->

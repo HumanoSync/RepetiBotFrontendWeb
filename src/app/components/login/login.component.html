@@ -3,8 +3,8 @@
       <h1>Login</h1>
       <form class="card" [formGroup]="loginForm">
         <mat-form-field>
-          <input matInput placeholder="Email address" formControlName="username"  required/>
-          <mat-error *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+          <input matInput placeholder="Email address" formControlName="email"  required/>
+          <mat-error *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
             Please enter a valid email . 
             </mat-error>
         </mat-form-field>

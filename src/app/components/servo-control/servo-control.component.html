@@ -1,101 +1,584 @@
 <app-header></app-header>
 
 <div class="main-container">
- 
+
+  <div class="image-container">
+    <img src="assets/images/logo_presen.png" alt="Logo" />
+  </div>
+
   <div class="controls-container">
-    
-    <div class="side">
-      <div class="servo-group">
-        <span>Brazo izquierdo</span>
-        <div *ngFor="let servo of leftArmServos.slice().reverse()" class="servo-control">
-          <span>ID: {{ servo.id }}</span>
-          <input type="range" min="0" max="180" step="1" [(ngModel)]="servo.angle" (change)="updateServo(servo)" />
-          <input type="number" min="0" max="180" [(ngModel)]="servo.angle" (change)="updateServo(servo)" />
+   
+
+
+
+    <div class="create-robot-container">
+      <h3>Crear Robot</h3>
+      
+      <!-- Formulario para crear un robot -->
+      <form (ngSubmit)="createRobot()">
+        <input
+          type="text"
+          placeholder="Nombre del Robot"
+          [(ngModel)]="newRobotName"
+          name="robotName"
+          required
+        />
+        <h1></h1>
+        <!-- Mensaje de error para el campo obligatorio -->
+        <div *ngIf="!newRobotName" class="error-message">
+          Por favor, ingrese el nombre del robot.
+        </div>
+
+        <button type="submit">Crear Robot</button>
+
+       
+        <button mat-raised-button color="primary" (click)="toggleRobotModal()">
+          {{ showRobotModal ? 'Cerrar Modal' : 'Mostrar Datos del Robot' }}
+        </button>
+
+       
+      </form>
+      <button mat-raised-button color="primary" (click)="toggleInitialPositionModal()">
+        {{ showInitialPositionModal ? 'Cerrar Modal' : 'Mover a Posición Inicial' }}
+      </button>
+
+      <button mat-raised-button color="primary" (click)="toggleCurrentPositionModal()">
+        {{ showCurrentPositionModal ? 'Cerrar Modal' : 'Mover a Posición ' }}
+      </button>
+
+      <button mat-raised-button color="primary" (click)="toggleSavePositionModal()">
+        {{ showSavePositionModal ? 'Cerrar Modal' : 'Guardar a Posición ' }}
+      </button>
+
+      <button mat-raised-button color="primary" (click)="toggleExecutePositionModal()">
+        {{ showExecutePositionModal ? 'Cerrar Modal' : 'Ejecutar  Posición ' }}
+      </button>
+      <button mat-raised-button color="primary" (click)="toggleRobotGetModal()">
+        {{ showRobotGetModal ? 'Cerrar Modal' : 'Mostrar todos los robots ' }}
+      </button>
+
+
+      <!-- Modal que muestra la lista de robots y los detalles de un robot seleccionado -->
+      <div *ngIf="showRobotModal" class="modal-overlay">
+        <div class="modal-content">
+          <h3>Detalles del Robot</h3>
+          <div *ngIf="robotDetail; else noData">
+            <p><strong>ID:</strong> {{ robotDetail.id }}</p>
+            <p><strong>Nombre:</strong> {{ robotDetail.botname }}</p>
+            <p><strong>Posición Inicial:</strong> {{ robotDetail.initial_position }}</p>
+            <p><strong>Posición Actual:</strong> {{ robotDetail.current_position }}</p>
+            <p>
+              <strong>Conexión al Broker:</strong>
+              {{ robotDetail.is_connected_broker ? 'Sí' : 'No' }}
+            </p>
+          </div>
+          <ng-template #noData>
+            <p>No se encontraron detalles del robot.</p>
+          </ng-template>
+          <button (click)="toggleRobotModal()">Cerrar</button>
         </div>
       </div>
-      <div class="servo-group">
-        <span>Pierna izquierda</span>
-        <div *ngFor="let servo of leftLegServos.slice().reverse()" class="servo-control">
-          <span>ID: {{ servo.id }}</span>
-          <input type="range" min="0" max="180" step="1" [(ngModel)]="servo.angle" (change)="updateServo(servo)" />
-          <input type="number" min="0" max="180" [(ngModel)]="servo.angle" (change)="updateServo(servo)" />
+
+
+
+      <div *ngIf="showRobotGetModal" class="modal-overlay">
+        <div class="modal-content">
+          <h3>Lista de Robots</h3>
+      
+          <!-- Mostrar el token del localStorage -->
+          <div>
+            <p><strong>Token de localStorage:</strong> {{ localStorageToken }}</p>
+          </div>
+      
+          <!-- Lista de robots -->
+          <div *ngIf="robots && robots.length > 0; else noRobots">
+            <table border="1" style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Posición Inicial</th>
+                  <th>Posición Actual</th>
+                  <th>Conexión al Broker</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let robot of robots">
+                  <td>{{ robot.id }}</td>
+                  <td>{{ robot.botname }}</td>
+                  <td>{{ robot.initial_position }}</td>
+                  <td>{{ robot.current_position }}</td>
+                  <td>{{ robot.is_connected_broker ? 'Sí' : 'No' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      
+          <!-- Mensaje cuando no hay robots -->
+          <ng-template #noRobots>
+            <p>No se encontraron robots en la lista.</p>
+          </ng-template>
+      
+          <!-- Botón para cerrar el modal -->
+          <button (click)="toggleRobotGetModal()">Cerrar</button>
         </div>
       </div>
+      
+
+      
+
+
+
     </div>
 
-    <div class="image-container">
-      <img style="z-index: -1" src="assets/images/robotSinFondo.png" alt="Robot humanoid" />
-      <div style="margin-top: auto;" class="servo-group">
-        <span>Cadera</span>
-        <div *ngFor="let servo of huckleServos.slice().reverse()" class="servo-control">
-          <span>ID: {{ servo.id }}</span>
-          <input type="range" min="0" max="180" step="1" [(ngModel)]="servo.angle" (change)="updateServo(servo)" />
-          <input type="number" min="0" max="180" [(ngModel)]="servo.angle" (change)="updateServo(servo)" />
-        </div>
-      </div>
-    </div>
-
-    <div class="side">
-      <div class="servo-group">
-        <span>Brazo derecho</span>
-        <div *ngFor="let servo of rightArmServos.slice().reverse()" class="servo-control">
-          <span>ID: {{ servo.id }}</span>
-          <input type="range" min="0" max="180" step="1" [(ngModel)]="servo.angle" (change)="updateServo(servo)" />
-          <input type="number" min="0" max="180" [(ngModel)]="servo.angle" (change)="updateServo(servo)" />
-        </div>
-      </div>
-      <div class="servo-group">
-        <span>Pierna derecha</span>
-        <div *ngFor="let servo of rightLegServos.slice().reverse()" class="servo-control">
-          <span>ID: {{ servo.id }}</span>
-          <input type="range" min="0" max="180" step="1" [(ngModel)]="servo.angle" (change)="updateServo(servo)" />
-          <input type="number" min="0" max="180" [(ngModel)]="servo.angle" (change)="updateServo(servo)" />
-        </div>
-      </div>
+    <!-- Modal que se muestra basado en showInitialPositionModal -->
+<div *ngIf="showInitialPositionModal" class="modal-overlay">
+  <div class="modal-container">
+    <h3>Confirmar Acción</h3>
+    <p>¿Estás seguro de que deseas mover el robot con el token: {{ robotToken }} a su posición inicial?</p>
+    <div class="modal-actions">
+      <button mat-raised-button color="primary" (click)="moveRobotToInitialPosition()">Mover</button>
+      <button mat-raised-button color="warn" (click)="toggleInitialPositionModal()">Cancelar</button>
     </div>
   </div>
+</div>
 
-  <div class="right-panel">
-    <div class="table-container">
-      <ngx-datatable class="material" [rows]="positions" [columns]="columns" [headerHeight]="20" [footerHeight]="20"
-        rowHeight="auto" [selected]="selectedPosition" (activate)="onSelect($event)">
-      </ngx-datatable>
+<div *ngIf="showCurrentPositionModal" class="modal-overlay">
+  <div class="modal-container">
+    <h3>Confirmar Acción</h3>
+    <p>¿Estás seguro de que deseas mover el robot con el token: {{ robotToken }} a la posición ?</p>
+    <div class="modal-actions">
+      <button mat-raised-button color="primary" (click)="moveRobotToCurrentPosition()">Mover</button>
+      <button mat-raised-button color="warn" (click)="toggleCurrentPositionModal()">Cancelar</button>
     </div>
-    <input style="margin-bottom: 2%;" type="number" min="100" max="1000" [(ngModel)]="time" />
-    <div class="button-group">
-      <!-- <button (click)="loadPositions()">Obtener Posiciones</button> -->
-      <button (click)="moveToPositionById()">Mover a Posicion</button>
-      <button (click)="movePositionUp()">Subir Posicion</button>
-      <button (click)="movePositionDown()">Bajar Posicion</button>
-      <button (click)="createPosition()">Crear Posición</button>
-      <button (click)="updatePosition()">Actualizar Posición</button>
-      <button (click)="deletePosition()">Eliminar Posición</button>
+  </div>
+</div>
+
+
+<div *ngIf="showSavePositionModal" class="modal-overlay">
+  <div class="modal-container">
+    <h3>Confirmar Acción</h3>
+    <p>¿Estás seguro de que deseas guardar el robot con el token: {{ robotToken }} a la posición ?</p>
+    <div class="modal-actions">
+      <button mat-raised-button color="primary" (click)="moveRobotToSavePosition()">Guardar</button>
+      <button mat-raised-button color="warn" (click)="toggleSavePositionModal()">Cancelar</button>
     </div>
-    <!-- <select style="margin-bottom: 2%;" [(ngModel)]="selectedMovementId" (ngModelChange)="loadPositions()">
-      <option [ngValue]="-1">Seleccione un movimiento</option>
-      <option *ngFor="let movement of movements" [ngValue]="movement.id">
-        {{ movement.name }}
-      </option>
-    </select> -->
-    <select style="margin-bottom: 2%;" [(ngModel)]="selectedMovement" (ngModelChange)="loadPositions()">
-      <option [ngValue]="null">Seleccione un movimiento</option>
-      <option *ngFor="let movement of movements" [ngValue]="movement">
-        {{ movement.name }}
-      </option>
-    </select>    
-    <input style="margin-bottom: 2%;" [(ngModel)]="newMovementName" type="text" placeholder="Nombre del Movimiento" />
-    <div class="button-group">
+  </div>
+</div>
+
+
+<div *ngIf="showExecutePositionModal" class="modal-overlay">
+  <div class="modal-container">
+    <h3>Confirmar Acción</h3>
+    <p>
+      ¿Estás seguro de que deseas ejecutar el robot con el token: 
+      <strong>{{ robotToken }}</strong> al movimiento con ID: 
+      <strong>{{ movementId }}</strong>?
+    </p>
+    <div class="modal-actions">
+      <!-- Botón para confirmar la acción -->
+      <button mat-raised-button color="primary" (click)="moveRobotToExecutePosition(movementId)">
+        Ejecutar
+      </button>
+      <!-- Botón para cancelar y cerrar el modal -->
+      <button mat-raised-button color="warn" (click)="toggleExecutePositionModal()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+
+    <div class="create-movement-container">
+      <h3>Crear Movimiento</h3>
+      
+      <!-- Input para el nombre del movimiento -->
+      <input
+        type="text"
+        placeholder="Nombre del Movimiento"
+        [(ngModel)]="movementName"
+        name="movementName"
+        required
+      />
+
+      <!-- Input para el ID del robot -->
+      <input
+        type="number"
+        placeholder="ID del Robot"
+        [(ngModel)]="robotId"
+        name="robotId"
+        required
+      />
+
+      <!-- Botón para enviar el formulario -->
       <button (click)="createMovement()">Crear Movimiento</button>
-      <button (click)="updateMovement()">Actualizar Movimiento</button>
-      <button (click)="deleteMovement()">Eliminar Movimiento</button>
+
+      <button mat-raised-button color="primary" (click)="toggleMovementsModal()" >
+        {{ showMovements ? 'Cerrar Movimientos' : 'Mostrar Movimientos' }}
+      </button>
+      
+      <!-- Fondo oscuro y modal que se muestra basado en showMovements -->
+      <div *ngIf="showMovements" class="movements-overlay">
+        <div class="movements-modal">
+          <div class="movements-container">
+            <h3>Movimientos del Robot (ID: {{ robotId }})</h3>
+            <ul *ngIf="movements.length > 0; else noMovements">
+              <li *ngFor="let movement of movements">
+                <strong>ID:</strong> {{ movement.id }} | <strong>Nombre:</strong> {{ movement.name }}
+              </li>
+            </ul>
+            <ng-template #noMovements>
+              <p>No se encontraron movimientos para este robot.</p>
+            </ng-template>
+          </div>
+          <button class="close-button" (click)="toggleMovementsModal()">Cerrar</button>
+        </div>
+      </div>
+
+
+       <!-- Botón para abrir el modal de actualización de movimiento -->
+  <!-- Botón para abrir/cerrar el modal de actualización de movimiento -->
+<button mat-raised-button color="primary" (click)="toggleUpdateMovementModal()">
+  {{ showUpdateMovementModal ? 'Cerrar Actualizar Movimiento' : 'Actualizar Movimiento' }}
+</button>
+
+<!-- Modal para actualizar el movimiento -->
+<div *ngIf="showUpdateMovementModal" class="movements-overlay">
+  <div class="movements-modal">
+    <div class="movements-container">
+      <h3>Actualizar Movimiento</h3>
+
+      <!-- Formulario para actualizar el movimiento -->
+      <form (ngSubmit)="updateMovement()">
+        <!-- Campo para el ID del Movimiento -->
+        <div class="form-group">
+          <label for="movementId">ID del Movimiento:</label>
+          <input
+            type="number"
+            id="movementId"
+            placeholder="Ingrese el ID del Movimiento"
+            [(ngModel)]="movementId"
+            name="movementId"
+            required
+          />
+        </div>
+
+        <!-- Campo para el nuevo nombre del movimiento -->
+        <div class="form-group">
+          <label for="movementName">Nuevo Nombre del Movimiento:</label>
+          <input
+            type="text"
+            id="movementName"
+            placeholder="Ingrese el nuevo nombre"
+            [(ngModel)]="movementName"
+            name="movementName"
+            required
+          />
+        </div>
+
+        <!-- Botón para enviar el formulario -->
+        <button type="submit" mat-raised-button color="primary">Actualizar Movimiento</button>
+      </form>
     </div>
-    <div class="button-group">
-      <button (click)="executeMovement()">Ejecutar Movimiento</button>
-      <button (click)="moveToInitialPosition()">Mover a posicion inicial</button>
-      <button (click)="downloadSelectedPositionsAsJson()">Descargar JSON</button>
-      <button (click)="saveInitialPosition()">Guardar Posicion Inicial</button>
+
+    <!-- Botón para cerrar el modal -->
+    <button class="close-button" (click)="toggleUpdateMovementModal()">Cerrar</button>
+  </div>
+</div>
+
+<!-- Botón para abrir/cerrar el modal de eliminación de movimiento -->
+<button mat-raised-button color="warn" (click)="toggleDeleteMovementModal()">
+  {{ showDeleteMovementModal ? 'Cerrar Eliminar Movimiento' : 'Eliminar Movimiento' }}
+</button>
+
+<!-- Modal para eliminar movimiento -->
+<div *ngIf="showDeleteMovementModal" class="movements-overlay">
+  <div class="movements-modal">
+    <div class="movements-container">
+      <h3>Eliminar Movimiento</h3>
+      <p>¿Estás seguro de que deseas eliminar el movimiento con ID: {{ movementId }}?</p>
+
+      <!-- Botones con color rojo -->
+      <button class="red-button" (click)="deleteMovement()">Eliminar</button>
+      <button class="red-button" (click)="toggleDeleteMovementModal()">Cancelar</button>
     </div>
   </div>
+</div>
+
+
+     
+    </div>
+
+    <div class="create-delay-angles-container">
+      <h3>Crear Posición</h3>
+
+      <!-- Formulario para ingresar delay, ángulos y el ID de movimiento -->
+      <form (ngSubmit)="createDelayAngles()">
+        <label for="delay">Retraso (ms):</label>
+        <input
+          type="number"
+          placeholder="Ingrese el retraso en ms"
+          [(ngModel)]="delay"
+          name="delay"
+          required
+        />
+
+        <label for="angles">Ángulos:</label>
+        <input
+          type="text"
+          placeholder="Ingrese los ángulos (separados por comas)"
+          [(ngModel)]="anglesInput"
+          name="angles"
+          required
+        />
+        <small class="hint">Ejemplo: 30, 45, 90</small>
+        
+
+       <!-- Campo de ID del Movimiento, con un contenedor adicional -->
+  <div class="movement-id-container">
+    <label for="movement-id">ID del Movimiento:</label>
+    <input
+      type="number"
+      id="movement-id"
+      placeholder="0"
+      [(ngModel)]="movementId"
+      name="movementId"
+    />
+  </div>
+  <div class="button-container">
+    <!-- Botón para crear posición -->
+    <button type="submit" mat-raised-button color="primary">Crear Posición</button>
+  
+    <!-- Botón para mostrar posiciones -->
+    <button type="button" mat-raised-button color="accent" (click)="togglePositionModal()">
+      {{ showPositions ? 'Cerrar Posiciones' : 'Mostrar Posiciones' }}
+    </button>
+
+
+    <button mat-raised-button color="primary" (click)="toggleUpdatePositionModal()">
+      {{ showUpdatePositionModal ? 'Cerrar Actualizar Posición' : 'Actualizar Posición' }}
+    </button>
+  </div>
+
+  <div class="button-container">
+ 
+  <button type = "button" mat-raised-button color="warn" (click)="toggleDeletePositionModal()">
+    {{ showDeletePositionModal ? 'Cerrar Eliminar Posicion' : 'Eliminar Posicion ' }}
+  </button>
+
+  
+  <button type = "button" mat-raised-button color="primary" (click)="toggleUpdateIncreasePositionModal()">
+    {{ showUpdateIncreasePositionModal ? 'Cerrar Incrementar Posición' : 'Incrementar Posicion' }}
+  </button>
+
+  <button type = "button" mat-raised-button color="primary" (click)="toggleUpdateDecreasePositionModal()">
+    {{ showUpdateDecreasePositionModal ? 'Cerrar disminuir Posición' : 'Disminuir Posicion' }}
+  </button>
+  
+  </div> 
+        
+        
+
+        
+      </form>
+
+      <div *ngIf="showPositions" class="positions-overlay">
+        <div class="positions-modal">
+          <div class="positions-container">
+            <h3>Posiciones del Movimiento (ID: {{ movementId }})</h3>
+      
+            <ul *ngIf="positions.length > 0; else noPositions">
+              <li *ngFor="let position of positions">
+                <strong>Secuencia:</strong> {{ position.sequence }} | 
+                <strong>Retraso:</strong> {{ position.delay }} ms |
+                <strong>Ángulos:</strong> {{ position.angles.join(', ') }}
+              </li>
+            </ul>
+            
+            <ng-template #noPositions>
+              <p>No se encontraron posiciones para este movimiento.</p>
+            </ng-template>
+          </div>
+          <button class="close-button" (click)="togglePositionModal()">Cerrar</button>
+        </div>
+      </div>
+
+
+      <div *ngIf="showUpdatePositionModal" class="positions-overlay">
+        <div class="positions-modal">
+          <div class="positions-container">
+            <h3>Actualizar Posición</h3>
+      
+            <form (ngSubmit)="updatePosition()">
+              <!-- Campo para el ID de la posición -->
+              <label for="positionId">ID de la Posición:</label>
+              <input
+                type="number"
+                id="positionId"
+                [(ngModel)]="positionId"
+                name="positionId"
+                required
+              />
+      
+              <!-- Campo para el retraso -->
+              <label for="delay">Retraso (ms):</label>
+              <input
+                type="number"
+                id="delay"
+                [(ngModel)]="delay"
+                name="delay"
+                required
+              />
+      
+              <!-- Campo para los ángulos -->
+              <label for="angles">Ángulos:</label>
+              <input
+                type="text"
+                id="angles"
+                placeholder="Ingrese los ángulos separados por comas"
+                [(ngModel)]="anglesInput"
+                name="angles"
+                required
+              />
+      
+              <!-- Botón para actualizar -->
+              <button type="submit" mat-raised-button color="primary">Actualizar Posición</button>
+            </form>
+          </div>
+      
+          <!-- Botón para cerrar el modal -->
+          <button class="close-button" (click)="toggleUpdatePositionModal()">Cerrar</button>
+        </div>
+      </div>
+
+
+      <div *ngIf="showUpdateIncreasePositionModal" class="positions-overlay">
+        <div class="positions-modal">
+          <div class="positions-container">
+            <h3>Incrementar Posición</h3>
+      
+            <form (ngSubmit)="updatePositionIncrease()">
+              <!-- Campo para el ID de la posición -->
+              <label for="positionId">ID de la Posición:</label>
+              <input
+                type="number"
+                id="positionId"
+                [(ngModel)]="positionId"
+                name="positionId"
+                required
+              />
+    
+      
+              <!-- Botón para actualizar -->
+              <button type="submit" mat-raised-button color="primary">Incrementar Posición</button>
+            </form>
+          </div>
+      
+          <!-- Botón para cerrar el modal -->
+          <button class="close-button" (click)="toggleUpdateIncreasePositionModal()">Cerrar</button>
+        </div>
+      </div>
+
+
+      <div *ngIf="showUpdateDecreasePositionModal" class="positions-overlay">
+        <div class="positions-modal">
+          <div class="positions-container">
+            <h3>Disminuir Posición</h3>
+      
+            <form (ngSubmit)="updatePositionDecrease()">
+              <!-- Campo para el ID de la posición -->
+              <label for="positionId">ID de la Posición:</label>
+              <input
+                type="number"
+                id="positionId"
+                [(ngModel)]="positionId"
+                name="positionId"
+                required
+              />
+    
+      
+              <!-- Botón para actualizar -->
+              <button type="submit" mat-raised-button color="primary">Disminuir Posición</button>
+            </form>
+          </div>
+      
+          <!-- Botón para cerrar el modal -->
+          <button class="close-button" (click)="toggleUpdateDecreasePositionModal()">Cerrar</button>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <div *ngIf="showDeletePositionModal" class="movements-overlay">
+        <div class="positions-modal">
+          <div class="positions-container">
+            <h3>Eliminar Posición</h3>
+           
+              <!-- Campo para el ID de la posición -->
+              <label for="positionId">ID de la Posición:</label>
+              <input
+                type="number"
+                id="positionId"
+                [(ngModel)]="positionId"
+                name="positionId"
+                required
+              />
+            <p>¿Estás seguro de que deseas eliminar la posicion con ID: {{ positionId }}?</p>
+      
+            <!-- Botones con color rojo -->
+            <button class="red-button" (click)="deletePosition()">Eliminar</button>
+            <button class="red-button" (click)="toggleDeletePositionModal()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+      
+
+      
+      
+    </div>
+
+
+    
+    
+
+   
+
+
+
+    
+
+
+
+
+  </div>
+
+  <div class="image-container">
+    <img src="assets/images/logo_presen.png" alt="Logo" />
+  </div>
+
+
+
 </div>
 
 <app-footer></app-footer>

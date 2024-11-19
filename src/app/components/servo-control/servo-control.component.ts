@@ -1,20 +1,12 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { ServoResource } from '../../models/ServoResource';
-import { WebSocketService } from '../../services/websocket.service';
-import { Subscription } from 'rxjs';
-import { WebSocketState } from '../../models/WebSocketState';
-import { UpdateServoRequest } from '../../models/UpdateServoRequest';
-import { CreateMovementRequest } from '../../models/CreateMovementRequest';
-import { CreatePositionRequest } from '../../models/CreatePositionRequest';
-import { UpdateMovementRequest } from '../../models/UpdateMovementRequest';
-import { UpdatePositionRequest } from '../../models/UpdatePositionRequest';
-import { MovementResource } from '../../models/MovementResource';
-import { PositionResource } from '../../models/PositionResource';
 import { HeaderComponent } from '../pages/header/header.component';
 import { FooterComponent } from '../pages/footer/footer.component';
+import { AdminService } from '../../services/roles/admin.service';
+import { UserStorageService } from '../../services/storage/user-storage.service';
+const BASIC_URL = "https://humansyncbackend.onrender.com/";
 
 @Component({
   selector: 'app-servo-control',
@@ -34,431 +26,546 @@ import { FooterComponent } from '../pages/footer/footer.component';
     './servo-control.component.scss'
   ]
 })
-export class ServoControlComponent implements OnInit, OnDestroy {
-  leftLegServos: ServoResource[] = [
-    { id: 1, angle: 90 },
-    { id: 2, angle: 90 },
-    { id: 3, angle: 90 },
-    { id: 4, angle: 90 }
-  ];
-  rightLegServos: ServoResource[] = [
-    { id: 5, angle: 90 },
-    { id: 6, angle: 90 },
-    { id: 7, angle: 90 },
-    { id: 8, angle: 90 }
-  ];
-  huckleServos: ServoResource[] = [
-    { id: 9, angle: 90 },
-    { id: 10, angle: 90 }
-  ];
-  leftArmServos: ServoResource[] = [
-    { id: 11, angle: 90 },
-    { id: 12, angle: 90 },
-    { id: 13, angle: 90 }
-  ];
-  rightArmServos: ServoResource[] = [
-    { id: 14, angle: 90 },
-    { id: 15, angle: 90 },
-    { id: 16, angle: 90 }
-  ];
 
-  // Definir los IDs de los movimientos
-  advanceMovementId: number = 6;
-  turnRightMovementId: number = 5;
-  turnLeftMovementId: number = 4;
 
-  controlConnectionState: WebSocketState = WebSocketState.DISCONNECTED;
-  controlConnectionStateSub: Subscription | null = null;
+export class ServoControlComponent implements OnInit {
 
-  //selectedMovementId: number = -1; // Inicializado a -1 para evitar el tipo null
-  selectedMovement: MovementResource | null = null; // Inicializado como null para evitar errores
-  newMovementName: string = '';
-  movements: MovementResource[] = [];
-  positions: any[] = []; // Ajuste aquí
-  selectedPosition: any[] = []; // Ajuste aquí
-  time:number = 500;
+  robotDetail: any = null; // Inicializa como null o cualquier estructura adecuada
 
-  columns = [
-    //{ prop: 'id', name: 'ID', width: 60, sortable: false },
-    { prop: 'order', name: 'Order', width: 60, sortable: false },
-    { prop: 'time', name: 'Time', width: 60, sortable: false },
-    ...Array.from({ length: 16 }, (_, i) => ({ prop: `servo${i + 1}`, name: `ID: ${i + 1}`, width: 60, sortable: false }))
-  ];  
-  
+  showMovements: boolean = false;
+  showUpdateMovementModal: boolean = false;
+  showPositions: boolean = false;
+  showUpdatePositionModal: boolean = false; // Controla la visibilidad del modal
+  showDeletePositionModal: boolean = false; 
+  showUpdateIncreasePositionModal: boolean = false;
+  showUpdateDecreasePositionModal: boolean = false;
+  showInitialPositionModal: boolean = false; // Controla la visibilidad del modal
+  robotToken: string = ''; // Token del robot (dinámico)
+  showRobotModal: boolean = false;
+  showCurrentPositionModal: boolean = false;
+  showSavePositionModal: boolean = false;
+  showExecutePositionModal: boolean = false;
+  showRobotGetModal: boolean = false;
+  robots: any[] = []; 
+  positions: any[] = []; 
+  movements: any[] = []; // Almacena los movimientos obtenidos
+  showModal: boolean = false; // Controla la visibilidad del modal
+  delay: number = 0;
+  anglesInput: string = '';
+  movementId: number = 0;
+  newRobotName: string = '';
+  movementName: string = '';
+  robotId: number | null = null;
+  positionId: number | null = null;
+  localStorageToken: string = ''; //
+  robotDetails: any = {}; // Estructura inicial vacía
 
-  constructor(private webSocketService: WebSocketService) { }
+
+  constructor(
+    private adminService: AdminService,
+    private userStorageService: UserStorageService
+  ) {}
 
   ngOnInit(): void {
-    this.controlConnectionStateSub = this.webSocketService.controlConnectionState$.subscribe(state => {
-      this.controlConnectionState = state;
-      if (state === WebSocketState.DISCONNECTED || state === WebSocketState.FAILED) {
-        this.resetServosToDefault();
-      } else if (state === WebSocketState.CONNECTED) {
-        this.loadServos();
-        this.loadMovements();
-      }
-    });
+
+
+    this.robotToken = localStorage.getItem('robotToken') || ''; 
   }
 
-  ngOnDestroy(): void {
-    this.controlConnectionStateSub?.unsubscribe();
-  }
+  createRobot() {
+    console.log("Creando robot...");
+    const token = this.userStorageService.getToken();
+    console.log("Token obtenido en ServoControlComponent:", token);
 
-  // Escucha de eventos de teclado
-  @HostListener('window:keydown', ['$event'])
-  handleKeyDown(event: KeyboardEvent) {
-    switch (event.key) {
-      case 'ArrowDown':
-        this.moveToInitialPosition();
-        break;
-      case 'ArrowUp':
-        this.executeMovementForId(this.advanceMovementId);
-        break;
-      case 'ArrowLeft':
-        this.executeMovementForId(this.turnLeftMovementId);
-        break;
-      case 'ArrowRight':
-        this.executeMovementForId(this.turnRightMovementId);
-        break;
-      default:
-        break;
+    if (!token) {
+        console.error("No se encontró token, no se puede crear el robot.");
+        return;
     }
-  }
 
-  // Ejecutar el movimiento
-  executeMovementForId(movementId: number) {
-    this.webSocketService.executeMovement(movementId).then(response => {
-      if (response.error) {
-        console.log(response.error.message);
-      } else {
-        console.log(response.payload.message);
-        this.loadServos();
-      }
-    }).catch(error => {
-      console.error('Error al ejecutar el movimiento:', error);
-    });
-  }
+    // `initial_position` y `current_position` deben estar en formato de array de números
+    const request = {
+        botname: this.newRobotName,
+        initial_position: this.getCurrentServoPositions(),
+        current_position: this.getCurrentServoPositions()
+    };
 
-  loadServos() {
-    this.webSocketService.getAllServos().then(response => {
-      if (response.error) {
-        console.log(response.error.message);
-      } else {
-        console.log(response.payload);
-        const servos = response.payload.content;
-        this.leftLegServos = servos.filter((servo: ServoResource) => servo.id >= 1 && servo.id <= 4);
-        this.rightLegServos = servos.filter((servo: ServoResource) => servo.id >= 5 && servo.id <= 8);
-        this.huckleServos = servos.filter((servo: ServoResource) => servo.id >= 9 && servo.id <= 10);
-        this.leftArmServos = servos.filter((servo: ServoResource) => servo.id >= 11 && servo.id <= 13);
-        this.rightArmServos = servos.filter((servo: ServoResource) => servo.id >= 14 && servo.id <= 16);
-      }
-    }).catch(error => {
-      console.error('Error al obtener los servos:', error);
-    });
-  }
+    console.log("Datos enviados para la creación del robot:", request);
 
-  loadMovements() {
-    this.webSocketService.getAllMovements().then(response => {
-      if (response.error) {
-        console.log(response.error.message);
-      } else {
-        this.movements = response.payload.content;
-      }
-    }).catch(error => {
-      console.error('Error al obtener los movimientos:', error);
-    });
-  }
-
-  resetServosToDefault() {
-    this.leftLegServos.forEach((servo: ServoResource) => servo.angle = 90);
-    this.rightLegServos.forEach((servo: ServoResource) => servo.angle = 90);
-    this.leftArmServos.forEach((servo: ServoResource) => servo.angle = 90);
-    this.rightArmServos.forEach((servo: ServoResource) => servo.angle = 90);
-    this.huckleServos.forEach((servo: ServoResource) => servo.angle = 90);
-  }
-
-  updateServo(servo: ServoResource) {
-    const request: UpdateServoRequest = { id: servo.id, angle: servo.angle };
-    if (this.controlConnectionState === WebSocketState.CONNECTED) {
-      this.webSocketService.updateServo(request).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          console.log(response.payload);
+    this.adminService.createRobot(request).subscribe({
+        next: response => {
+            console.log('Robot creado:', response);
+            this.newRobotName = '';  // Limpiar el nombre del robot después de crear
+        },
+        error: error => {
+            console.error('Error en la creación del robot:', error);
         }
-      }).catch(error => {
-        console.error('Error al actualizar el servo:', error);
-      });
-    } else {
-      this.resetServosToDefault(); // Asegura que el ángulo vuelva a 90 si no está conectado
-    }
+    });
   }
+
+
+
+
+  
+  
+
+
+
+
+
+
+ 
+  getCurrentServoPositions(): number[] {
+    // Ajusta esta función para devolver las posiciones actuales en formato de array de números
+    return [90, 90, 90, 90]; // Ejemplo: todas las posiciones de servos en 90 grados
+  }
+
 
   createMovement() {
-    const request: CreateMovementRequest = { name: this.newMovementName };
-    this.webSocketService.createMovement(request).then(response => {
-      if (response.error) {
-        console.log(response.error.message);
-      } else {
-        console.log('Movimiento creado:', response.payload);
-        const newMovement: MovementResource = response.payload;
-        this.movements.push(newMovement);
-        this.selectedMovement = newMovement;
-        this.newMovementName = "";
-        this.positions = [];
+    if (!this.movementName || this.robotId === null) {
+      console.error("Nombre del movimiento o ID del robot faltante.");
+      return;
+    }
+
+    const request = {
+      name: this.movementName,
+      robot_id: this.robotId
+    };
+
+    console.log("Datos enviados para la creación del movimiento:", request);
+
+    this.adminService.createMovement(request).subscribe({
+      next: response => {
+        console.log('Movimiento creado:', response);
+        this.movementName = '';  // Limpiar los campos después de crear
+        this.robotId = null;
+      },
+      error: error => {
+        console.error('Error en la creación del movimiento:', error);
       }
-    }).catch(error => {
-      console.error('Error al crear el movimiento:', error);
     });
   }
 
-  updateMovement() {
-    if (this.selectedMovement) {
-      const request: UpdateMovementRequest = { id: this.selectedMovement.id, name: this.newMovementName };
-      this.webSocketService.updateMovement(request).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          console.log('Movimiento actualizado:', response.payload);
-          this.loadMovements(); // Refresca la lista de movimientos
-          this.newMovementName = "";
-        }
-      }).catch(error => {
-        console.error('Error al actualizar el movimiento:', error);
-      });
-    }
-  }
 
-  deleteMovement() {
-    if (this.selectedMovement) {
-      this.webSocketService.deleteMovement(this.selectedMovement.id).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          console.log('Movimiento eliminado:', response.payload);
-          this.loadMovements(); // Refresca la lista de movimientos
-          this.selectedMovement = null;
-          this.positions = [];
-        }
-      }).catch(error => {
-        console.error('Error al eliminar el movimiento:', error);
-      });
-    }
-  }
 
-  createPosition() {
-    if (this.selectedMovement) {
-      const angles = [
-        ...this.leftLegServos,
-        ...this.rightLegServos,
-        ...this.huckleServos,
-        ...this.leftArmServos,
-        ...this.rightArmServos
-      ];
-      const request: CreatePositionRequest = { time: this.time, angles, movement_id: this.selectedMovement.id };
-      console.log(request)
-      this.webSocketService.createPosition(request).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          console.log('Posición creada:', response.payload);
-          this.loadPositions(); // Refresca la lista de posiciones
-          this.selectedPosition = []; // Restablecer la selección
-        }
-      }).catch(error => {
-        console.error('Error al crear la posición:', error);
-      });
-    }
-  }
 
-  updatePosition() {
-    if (this.selectedMovement && this.selectedPosition.length > 0) {
-      const angles = [
-        ...this.leftLegServos,
-        ...this.rightLegServos,
-        ...this.huckleServos,
-        ...this.leftArmServos,
-        ...this.rightArmServos
-      ];
-      const request: UpdatePositionRequest = { id: this.selectedPosition[0].id, time: this.time, angles };
-      this.webSocketService.updatePosition(request).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          console.log('Posición actualizada:', response.payload);
-          this.loadPositions(); // Refresca la lista de posiciones
-          this.selectedPosition = []; // Restablecer la selección
-        }
-      }).catch(error => {
-        console.error('Error al actualizar la posición:', error);
-      });
-    }
-  }
+  createDelayAngles() {
+    const anglesArray = this.anglesInput.split(',').map(angle => parseInt(angle.trim(), 10));
+    
+    const request = {
+      delay: this.delay,
+      angles: anglesArray,
+      movement_id: this.movementId
+    };
 
-  movePositionUp() {
-    if (this.selectedMovement && this.selectedPosition.length > 0) {
-      console.log(this.selectedPosition[0].id)
-      this.webSocketService.movePositionUp(this.selectedPosition[0].id).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          console.log('Posición actualizada:', response.payload);
-          this.loadPositions(); // Refresca la lista de posiciones
-          this.selectedPosition = []; // Restablecer la selección
-        }
-      }).catch(error => {
-        console.error('Error al actualizar la posición:', error);
-      });
-    }
-  }
+    console.log("Datos enviados para la creación del delay y ángulos:", request);
 
-  movePositionDown() {
-    if (this.selectedMovement && this.selectedPosition.length > 0) {
-      this.webSocketService.movePositionDown(this.selectedPosition[0].id).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          console.log('Posición actualizada:', response.payload);
-          this.loadPositions(); // Refresca la lista de posiciones
-          this.selectedPosition = []; // Restablecer la selección
-        }
-      }).catch(error => {
-        console.error('Error al actualizar la posición:', error);
-      });
-    }
-  }
-
-  deletePosition() {
-    if (this.selectedPosition.length > 0) {
-      this.webSocketService.deletePosition(this.selectedPosition[0].id).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          console.log('Posición eliminada:', response.payload);
-          this.loadPositions(); // Refresca la lista de posiciones
-          this.selectedPosition = []; // Restablecer la selección
-        }
-      }).catch(error => {
-        console.error('Error al eliminar la posición:', error);
-      });
-    }
-  }
-
-  loadPositions() {
-    if (this.selectedMovement) {
-      this.webSocketService.getPositionsByMovementId(this.selectedMovement.id).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          this.positions = response.payload.content.map((position: PositionResource) => {
-            const positionWithServos: any = { ...position };
-            position.angles.forEach(angle => {
-              positionWithServos[`servo${angle.id}`] = angle.angle;
-            });
-            console.log(positionWithServos)
-            return positionWithServos;
-          });
-        }
-      }).catch(error => {
-        console.error('Error al obtener las posiciones:', error);
-      });
-    } 
-  }
-
-  saveInitialPosition(){
-    this.webSocketService.saveInitialPosition().then(response => {
-      if (response.error) {
-        console.log(response.error.message);
-      } else {
-        console.log(response.payload.message);
+    this.adminService.createDelayAngles(request).subscribe({
+      next: response => {
+        console.log('Delay y ángulos creados:', response);
+        this.resetForm();
+      },
+      error: error => {
+        console.error('Error en la creación del delay y ángulos:', error);
       }
-    }).catch(error => {
-      console.error('Error al actualizar el servo:', error);
-    });
-  }
-  
-  executeMovement(){
-    if (this.selectedMovement) {
-      this.webSocketService.executeMovement(this.selectedMovement.id).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          console.log(response.payload.message);
-          this.loadServos();
-        }
-      }).catch(error => {
-        console.error('Error al obtener las posiciones:', error);
-      });
-    } 
-  }
-
-  moveToInitialPosition(){
-    this.webSocketService.moveToInitialPosition().then(response => {
-      if (response.error) {
-        console.log(response.error.message);
-      } else {
-        console.log(response.payload.message);
-        this.loadServos();
-      }
-    }).catch(error => {
-      console.error('Error al eliminar el movimiento:', error);
     });
   }
 
-  moveToPositionById(){
-    if (this.selectedPosition.length > 0) {
-      this.webSocketService.moveToPositionById(this.selectedPosition[0].id).then(response => {
-        if (response.error) {
-          console.log(response.error.message);
-        } else {
-          console.log('Posición Movido:', response.payload);
-          const servos = response.payload.content;
-          this.leftLegServos = servos.filter((servo: ServoResource) => servo.id >= 1 && servo.id <= 4);
-          this.rightLegServos = servos.filter((servo: ServoResource) => servo.id >= 5 && servo.id <= 8);
-          this.huckleServos = servos.filter((servo: ServoResource) => servo.id >= 9 && servo.id <= 10);
-          this.leftArmServos = servos.filter((servo: ServoResource) => servo.id >= 11 && servo.id <= 13);
-          this.rightArmServos = servos.filter((servo: ServoResource) => servo.id >= 14 && servo.id <= 16);
-
-          this.selectedPosition = []; // Restablecer la selección
-        }
-      }).catch(error => {
-        console.error('Error al eliminar la posición:', error);
-      });
-    }
+  private resetForm() {
+    this.delay = 0;
+    this.anglesInput = '';
+    this.movementId = 0;
   }
 
-  downloadSelectedPositionsAsJson() {
-    if (this.selectedMovement && this.positions.length > 0) {
-      // Crear un objeto JSON con las posiciones seleccionadas, eliminando la propiedad "angles"
-      const filteredPositions = this.positions.map(position => {
-        const { angles, ...rest } = position; // Desestructuración para excluir 'angles'
-        return rest;
+  toggleMovementsModal(): void {
+    this.getMovements();
+    this.showMovements = !this.showMovements;
+  }
+
+
+ 
+
+  getMovements() {
+    
+    if (this.robotId) {  // Asegúrate de que robotId no es null
+      this.adminService.getMovementsByRobotId(this.robotId).subscribe({
+        next: (response) => {
+          this.movements = response;
+          console.log('Movimientos obtenidos:', this.movements);
+        },
+        error: (error) => {
+          console.error('Error al obtener los movimientos:', error);
+        }
       });
-  
-      // Convertir el objeto filtrado a JSON
-      const dataStr = JSON.stringify(filteredPositions, null, 2);
-  
-      // Crear un elemento de anclaje temporal para la descarga
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${this.selectedMovement.name}.json`;
-      document.body.appendChild(a);
-      a.click();
-  
-      // Limpiar el DOM
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
     } else {
-      console.log('No hay posiciones disponibles para descargar.');
+      console.error('robotId no está definido');
     }
   }
   
-  
-  onSelect(event: any) {
-    if (event.type === 'click') {
-      this.selectedPosition = [event.row];
-    }
+
+
+
+  // Método para abrir/cerrar el modal de actualización de movimiento
+  toggleUpdateMovementModal(): void {
+    this.showUpdateMovementModal = !this.showUpdateMovementModal;
   }
+
+  // Método para actualizar el movimiento
+  updateMovement(): void {
+    if (!this.movementId || !this.movementName.trim()) {
+      console.error("ID del movimiento o nombre faltante.");
+      return;
+    }
+  
+    const request = { name: this.movementName };
+    const url = `${BASIC_URL}api/v1/movement/update/${this.movementId}`;
+  
+    console.log('URL:', url);
+    console.log('Token:', this.userStorageService.getToken());
+    console.log('Datos enviados:', request);
+  
+    this.adminService.updateMovement(this.movementId, request).subscribe({
+      next: response => {
+        console.log('Movimiento actualizado:', response);
+        this.toggleUpdateMovementModal();
+      },
+      error: error => {
+        console.error('Error detallado:', error);
+      }
+    });
+  }
+  
+  
+  
+showDeleteMovementModal: boolean = false; // Controla la visibilidad del modal de eliminación
+
+// Método para abrir/cerrar el modal de eliminación
+toggleDeleteMovementModal(): void {
+  this.showDeleteMovementModal = !this.showDeleteMovementModal;
+}
+
+// Método para eliminar un movimiento
+deleteMovement(): void {
+  if (!this.movementId) {
+    console.error("ID del movimiento faltante para eliminar.");
+    return;
+  }
+
+  const confirmDelete = confirm(`¿Estás seguro de eliminar el movimiento con ID ${this.movementId}?`);
+  if (!confirmDelete) {
+    return;
+  }
+
+  this.adminService.deleteMovement(this.movementId).subscribe({
+    next: (response) => {
+      console.log(`Movimiento con ID ${this.movementId} eliminado:`, response);
+      this.toggleDeleteMovementModal(); // Cerrar modal tras la eliminación
+      this.getMovements(); // Actualizar lista de movimientos
+    },
+    error: (error) => {
+      console.error('Error al eliminar el movimiento:', error);
+    }
+  });
+}
+
+togglePositionModal(): void {
+  this.getPositons();
+  this.showPositions = !this.showPositions;
+}
+
+
+
+
+getPositons() {
+    
+  if (this.movementId) {  // Asegúrate de que robotId no es null
+    this.adminService.getMovementsByPositionId(this.movementId).subscribe({
+      next: (response) => {
+        this.positions = response;
+        console.log('Movimientos obtenidos:', this.positions);
+      },
+      error: (error) => {
+        console.error('Error al obtener los movimientos:', error);
+      }
+    });
+  } else {
+    console.error('robotId no está definido');
+  }
+}
+
+// Alterna la visibilidad del modal de actualización
+toggleUpdatePositionModal(): void {
+  this.showUpdatePositionModal = !this.showUpdatePositionModal;
+}
+
+// Método para actualizar posición
+updatePosition(): void {
+  if (!this.positionId || this.delay === null || !this.anglesInput.trim()) {
+    console.error("ID de la posición, retraso o ángulos faltantes.");
+    return;
+  }
+
+  const anglesArray = this.anglesInput.split(',').map(angle => parseInt(angle.trim(), 10));
+  const request = {
+    delay: this.delay,
+    angles: anglesArray
+  };
+
+  console.log("Datos enviados para la actualización de la posición:", request);
+
+  this.adminService.updatePosition(this.positionId, request).subscribe({
+    next: (response) => {
+      console.log('Posición actualizada:', response);
+      this.toggleUpdatePositionModal(); // Cierra el modal después de actualizar
+    },
+    error: (error) => {
+      console.error('Error al actualizar la posición:', error);
+    }
+  });
+}
+
+toggleUpdateIncreasePositionModal(): void {
+  this.showUpdateIncreasePositionModal = !this.showUpdateIncreasePositionModal;
+}
+
+// Método para actualizar posición
+updatePositionIncrease(): void {
+  if (!this.positionId) {
+    console.error("ID de la posición faltante.");
+    return;
+  }
+
+  this.adminService.updatePositionIncrease(this.positionId).subscribe({
+    next: (response) => {
+      console.log('Posición incrementada:', response);
+      this.toggleUpdateIncreasePositionModal();
+      this.getPositons(); // Refrescar la lista de posiciones
+    },
+    error: (error) => {
+      console.error('Error al incrementar la posición:', error);
+    }
+  });
+}
+
+
+
+
+
+toggleUpdateDecreasePositionModal(): void {
+  this.showUpdateDecreasePositionModal = !this.showUpdateDecreasePositionModal;
+}
+
+// Método para actualizar posición
+updatePositionDecrease(): void {
+  if (!this.positionId) {
+    console.error("ID de la posición faltante.");
+    return;
+  }
+
+  this.adminService.updatePositionDecrease(this.positionId).subscribe({
+    next: (response) => {
+      console.log('Posición decrementada:', response);
+      this.toggleUpdateDecreasePositionModal();
+      this.getPositons(); // Refrescar la lista de posiciones
+    },
+    error: (error) => {
+      console.error('Error al disminuir la posición:', error);
+    }
+  });
+}
+
+
+
+toggleDeletePositionModal(): void {
+  this.showDeletePositionModal = !this.showDeletePositionModal;
+}
+
+// Método para eliminar un movimiento
+deletePosition(): void {
+  if (!this.positionId) {
+    console.error("ID de la posicion faltante para eliminar.");
+    return;
+  }
+
+  const confirmDelete = confirm(`¿Estás seguro de eliminar la posicion con ID ${this.positionId}?`);
+  if (!confirmDelete) {
+    return;
+  }
+
+  this.adminService.deletePosition(this.positionId).subscribe({
+    next: (response) => {
+      console.log(`Posición con ID ${this.positionId} eliminado:`, response);
+      this.toggleDeletePositionModal(); // Cerrar modal tras la eliminación
+      this.getPositons(); // Actualizar lista de movimientos
+    },
+    error: (error) => {
+      console.error('Error al eliminar la posicon: ', error);
+    }
+  });
+}
+
+toggleRobotModal(): void {
+  this.getRobotDetails(),
+  this.showRobotModal = !this.showRobotModal;
+}
+
+
+
+getRobotDetails(): void {
+  if (!this.robotToken) {
+    alert('Token del robot no encontrado.');
+    return;
+  }
+
+  this.adminService.getRobotByToken(this.robotToken).subscribe({
+    next: (response) => {
+      if (response) {
+        this.robotDetail = response; // Asegúrate de que la respuesta tiene datos válidos
+        console.log('Detalles del robot obtenidos:', this.robotDetail);
+      } else {
+        console.warn('La respuesta no contiene datos del robot.');
+      }
+    },
+    error: (error) => {
+      console.error('Error al obtener los datos del robot:', error);
+      alert('No se pudieron obtener los detalles del robot.');
+    }
+  });
+}
+
+
+
+toggleInitialPositionModal(): void {
+  this.showInitialPositionModal = !this.showInitialPositionModal;
+}
+
+moveRobotToInitialPosition(): void {
+  if (!this.robotToken) {
+    alert('Token del robot no encontrado.');
+    return;
+  }
+
+  this.adminService.moveToInitialPosition(this.robotToken).subscribe({
+    next: (response) => {
+      console.log("Robot movido a posición inicial:", response);
+      alert("El robot se movió a su posición inicial exitosamente.");
+      this.toggleInitialPositionModal(); // Cierra el modal
+    },
+    error: (error) => {
+      console.error("Error al mover el robot a la posición inicial:", error);
+      alert("Ocurrió un error al mover el robot.");
+    }
+  });
+}
+
+
+toggleCurrentPositionModal(): void {
+  this.showCurrentPositionModal = !this.showCurrentPositionModal;
+}
+
+moveRobotToCurrentPosition(): void {
+  if (!this.robotToken) {
+    alert('Token del robot no encontrado.');
+    return;
+  }
+
+  this.adminService.moveToCurrentPosition(this.robotToken).subscribe({
+    next: (response) => {
+      console.log("Robot movido a posición :", response);
+      alert("El robot se movió a su posición  exitosamente.");
+      this.toggleCurrentPositionModal(); // Cierra el modal
+    },
+    error: (error) => {
+      console.error("Error al mover el robot a la posición :", error);
+      alert("Ocurrió un error al mover el robot.");
+    }
+  });
+}
+
+toggleSavePositionModal(): void {
+  this.showSavePositionModal = !this.showSavePositionModal;
+}
+
+moveRobotToSavePosition(): void {
+  if (!this.robotToken) {
+    alert('Token del robot no encontrado.');
+    return;
+  }
+
+  this.adminService.moveToSavePosition(this.robotToken).subscribe({
+    next: (response) => {
+      console.log("Robot guardado a posición :", response);
+      alert("El robot se guardo a su posición  exitosamente.");
+      this.toggleSavePositionModal(); // Cierra el modal
+    },
+    error: (error) => {
+      console.error("Error al guardar el robot a la posición :", error);
+      alert("Ocurrió un error al guardar el robot.");
+    }
+  });
+}
+
+
+toggleExecutePositionModal(): void {
+  // Corregir el nombre de la variable para mantener consistencia
+  this.showExecutePositionModal = !this.showExecutePositionModal;
+}
+
+moveRobotToExecutePosition(movementId: number): void {
+  if (!this.robotToken) {
+    alert('Token del robot no encontrado.');
+    return;
+  }
+
+  if (!movementId) {
+    alert('ID de movimiento no especificado.');
+    return;
+  }
+
+  this.adminService.moveToExecutePosition(movementId, this.robotToken).subscribe({
+    next: (response) => {
+      console.log("Movimiento del robot ejecutado exitosamente:", response);
+      alert("El robot se movió a la posición indicada exitosamente.");
+      this.toggleExecutePositionModal(); // Cierra el modal
+    },
+    error: (error) => {
+      console.error("Error al ejecutar el movimiento del robot:", error);
+      alert("Ocurrió un error al ejecutar el movimiento del robot.");
+    }
+  });
+}
+
+
+
+toggleRobotGetModal(): void {
+  this.getRobotGetDetails();
+  this.showRobotGetModal = !this.showRobotGetModal;
+}
+
+
+
+getRobotGetDetails(): void {
+  this.adminService.getRobot().subscribe({
+    next: (response) => {
+      if (response && response.length > 0) {
+        this.robots = response; // Almacenar todos los robots
+        console.log('Detalles de los robots obtenidos:', this.robots);
+      } else {
+        console.warn('La respuesta no contiene datos de robots.');
+        this.robots = []; // Vacía la lista si no hay datos
+      }
+    },
+    error: (error) => {
+      console.error('Error al obtener los datos de los robots:', error);
+      alert('No se pudieron obtener los detalles de los robots.');
+    }
+  });
+}
+
+
+
+
+
+
+
+
 }
